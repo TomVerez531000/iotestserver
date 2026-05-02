@@ -20,7 +20,7 @@ function player_join(ws, data) {
   var message = {};
   message.type = "join-response";
   message.success = true;
-  send_data(message);
+  send_data(ws, message);
 }
 
 wss.on("connection", (ws, req) => {
