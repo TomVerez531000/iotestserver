@@ -15,6 +15,7 @@ function player_join(ws, data) {
     message.type = "join-response";
     message.success = false;
     send_data(ws, message);
+    return
   }
 
   var message = {};
