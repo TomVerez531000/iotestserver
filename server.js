@@ -94,8 +94,8 @@ wss.on("connection", (ws, req) => {
       update_direction(ws, data)
     }
   });
-});
 
-ws.on("close", (ws) => {
-  players[ws] = null;
-})
+  ws.on("close", (ws) => {
+    players[ws] = null;
+  })
+});
