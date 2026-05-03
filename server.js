@@ -42,8 +42,8 @@ function broadcastPositions() {
 
   const message = JSON.stringify(payload);
   for (let ws in players) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(message);
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(message);
     }
   };
 }
