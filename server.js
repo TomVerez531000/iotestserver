@@ -29,7 +29,7 @@ function player_join(ws, data) {
 function update_direction(ws, data) {
   if (players[ws.id] == null) {return}
   players[ws.id].direction = data.direction
-  console.log(direction);
+  console.log(data.direction);
 }
 
 wss.on("connection", (ws, req) => {
