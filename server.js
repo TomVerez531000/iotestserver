@@ -17,7 +17,8 @@ var players = {}
 setInterval(() => {
   const dt = 1 / TICK_RATE;
 
-  for (let ws in players) {
+  for (let id in players) {
+    var ws = players[id]
     if (ws.direction && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
       
       if (ws.direction.x > 1 || ws.direction.y > 1) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
@@ -36,7 +37,8 @@ function broadcastPositions() {
   };
 
   // On prépare les données (on n'envoie que le nécessaire)
-  for (let ws in players) {
+  for (let id in players) {
+    var ws = players[id]
     payload.players[ws.id] = {
       x: ws.x,
       y: ws.y,
@@ -45,8 +47,9 @@ function broadcastPositions() {
   }
 
   const message = JSON.stringify(payload);
-  for (let ws in players) {
-    console.log(ws);
+  for (let id in players) {
+    var ws = players[id]
+    
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(message);
     }
@@ -68,7 +71,7 @@ function player_join(ws, data) {
     return
   }
 
-  players[ws] = true;
+  players[ws.id] = ws;
   var pos = get_spawn_pos(ws);
   ws.x = pos.x;
   ws.y = pos.y;
@@ -82,7 +85,7 @@ function player_join(ws, data) {
 }
 
 function update_direction(ws, data) {
-  if (!players[ws]) {return}
+  if (!players[ws.id]) {return}
   ws.direction = data.direction;
 }
 
@@ -101,6 +104,6 @@ wss.on("connection", (ws, req) => {
   });
 
   ws.on("close", (ws) => {
-    players[ws] = null;
+    players[ws.id] = null;
   })
 });
