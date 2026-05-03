@@ -41,11 +41,11 @@ function broadcastPositions() {
   }
 
   const message = JSON.stringify(payload);
-  players.forEach((client) => {
+  for (let ws in players) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(message);
     }
-  });
+  };
 }
 
 function get_spawn_pos(ws) {
