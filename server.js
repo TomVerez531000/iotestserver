@@ -8,6 +8,7 @@ function send_data(ws, data) {
   ws.send(text);
 }
 
+players = {}
 function player_join(ws, data) {
   const nickname = data.nickname
   if (nickname == null || nickname == "" || nickname.length > 20) {
@@ -18,10 +19,17 @@ function player_join(ws, data) {
     return
   }
 
+  players[ws.id] = {};
   var message = {};
   message.type = "join-response";
   message.success = true;
   send_data(ws, message);
+}
+
+function update_direction(ws, data) {
+  if (players[ws.id] == null) {return}
+  players[ws.id].direction = data.direction
+  console.log(direction);
 }
 
 wss.on("connection", (ws, req) => {
@@ -33,6 +41,8 @@ wss.on("connection", (ws, req) => {
     const data = JSON.parse(msg)
     if (data.type == "join-game") {
       player_join(ws, data);
+    } else if(data.type == "update_direction") {
+      update_direction(ws, data)
     }
   });
 });
