@@ -20,6 +20,7 @@ setInterval(() => {
   for (let id in players) {
     var ws = players[id]
     if (ws == null) {continue}
+    
     if (ws.direction && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
       
       if (ws.direction.x > 1.01 || ws.direction.y > 1.01) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
@@ -40,6 +41,8 @@ function broadcastPositions() {
   // On prépare les données (on n'envoie que le nécessaire)
   for (let id in players) {
     var ws = players[id]
+    if (ws == null) {continue;}
+    
     payload.players[ws.id] = {
       x: ws.x,
       y: ws.y,
@@ -50,6 +53,7 @@ function broadcastPositions() {
   const message = JSON.stringify(payload);
   for (let id in players) {
     var ws = players[id]
+    if (ws == null) {continue;}
     
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(message);
