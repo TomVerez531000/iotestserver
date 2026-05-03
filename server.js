@@ -13,7 +13,7 @@ players = {}
 setInterval(() => {
   const dt = 1 / TICK_RATE;
 
-  for (let ws in players) 
+  for (let ws in players) {
     if (ws.direction && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
       
       if (ws.direction.x > 1 || ws.direction.y > 1) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
