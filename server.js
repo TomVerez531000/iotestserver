@@ -72,6 +72,7 @@ function player_join(ws, data) {
   var message = {};
   message.type = "join-response";
   message.success = true;
+  message.player_id = ws.id;
   send_data(ws, message);
 }
 
