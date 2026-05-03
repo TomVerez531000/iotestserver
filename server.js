@@ -9,7 +9,7 @@ function send_data(ws, data) {
 }
 
 const TICK_RATE = 20;
-players = {}
+var players = {}
 setInterval(() => {
   const dt = 1 / TICK_RATE;
 
