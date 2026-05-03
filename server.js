@@ -8,6 +8,10 @@ function send_data(ws, data) {
   ws.send(text);
 }
 
+function get_player_speed(ws) {
+  return 1/ws.size*10000;
+}
+
 const TICK_RATE = 20;
 var players = {}
 setInterval(() => {
@@ -17,8 +21,8 @@ setInterval(() => {
     if (ws.direction && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
       
       if (ws.direction.x > 1 || ws.direction.y > 1) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
-      ws.x += ws.direction.x * PLAYER_SPEED * dt;
-      ws.y += ws.direction.y * PLAYER_SPEED * dt;
+      ws.x += ws.direction.x * get_player_speed(ws) * dt;
+      ws.y += ws.direction.y * get_player_speed(ws) * dt;
     }
   }
 
