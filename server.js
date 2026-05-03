@@ -19,9 +19,9 @@ setInterval(() => {
 
   for (let id in players) {
     var ws = players[id]
-    if (ws.direction !== null && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
+    if (ws.direction && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
       
-      if (ws.direction.x > 1 || ws.direction.y > 1) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
+      if (ws.direction.x > 1.01 || ws.direction.y > 1.01) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
       ws.x += ws.direction.x * get_player_speed(ws) * dt;
       ws.y += ws.direction.y * get_player_speed(ws) * dt;
     }
