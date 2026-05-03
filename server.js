@@ -95,3 +95,7 @@ wss.on("connection", (ws, req) => {
     }
   });
 });
+
+ws.on("close", (ws) => {
+  players[ws] = null;
+})
