@@ -79,7 +79,6 @@ function player_join(ws, data) {
     var message = {};
     message.type = "join-response";
     message.success = false;
-    message.mapSeed = mapSeed;
     send_data(ws, message);
     return
   }
@@ -93,6 +92,7 @@ function player_join(ws, data) {
   var message = {};
   message.type = "join-response";
   message.success = true;
+  message.mapSeed = mapSeed;
   message.player_id = ws.id;
   send_data(ws, message);
 }
