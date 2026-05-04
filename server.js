@@ -13,6 +13,7 @@ function get_player_speed(ws) {
 }
 
 const TICK_RATE = 20;
+let mapSeed = Math.floor(Math.random()*100000);
 var players = {}
 setInterval(() => {
   const dt = 1 / TICK_RATE;
@@ -72,10 +73,13 @@ function player_join(ws, data) {
     var message = {};
     message.type = "join-response";
     message.success = false;
+    message.mapSeed = mapSeed;
     send_data(ws, message);
     return
   }
 
+  check_game_active();
+  
   players[ws.id] = ws;
   var pos = get_spawn_pos(ws);
   ws.x = pos.x;
