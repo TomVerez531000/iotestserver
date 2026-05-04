@@ -77,8 +77,6 @@ function player_join(ws, data) {
     send_data(ws, message);
     return
   }
-
-  check_game_active();
   
   players[ws.id] = ws;
   var pos = get_spawn_pos(ws);
