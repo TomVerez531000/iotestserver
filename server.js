@@ -14,6 +14,10 @@ function get_player_speed(ws) {
   return 1/ws.size*10000;
 }
 
+function clamp(a, x, y) {
+  return Math.max(Math.min(a, x), y)
+}
+
 const TICK_RATE = 20;
 let mapSeed = Math.floor(Math.random()*100000);
 var players = {}
@@ -27,9 +31,8 @@ setInterval(() => {
     if (ws.direction && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
       
       if (ws.direction.x > 1.01 || ws.direction.y > 1.01) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
-      ws.x = Math.min(ws.x + (ws.direction.x * get_player_speed(ws) * dt), MAP_SIZE.x);
-      console.log(ws.x);
-      ws.y = Math.min(ws.y + (ws.direction.y * get_player_speed(ws) * dt), MAP_SIZE.y);
+      ws.x = clamp(ws.x + (ws.direction.x * get_player_speed(ws) * dt), -MAP_SIZE.x/2, MAP_SIZE.x/2);
+      ws.y = clamp(ws.y + (ws.direction.y * get_player_speed(ws) * dt), -MAP_SIZE.y/2, MAP_SIZE.y/2);
     }
   }
 
