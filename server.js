@@ -3,6 +3,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const wss = new WebSocket.Server({ port: process.env.PORT || 3000 });
 
+const MAP_SIZE = {x:10000, y:10000};
+
 function send_data(ws, data) {
   const text = JSON.stringify(data);
   ws.send(text);
@@ -25,8 +27,8 @@ setInterval(() => {
     if (ws.direction && (ws.direction.x !== 0 || ws.direction.y !== 0)) {
       
       if (ws.direction.x > 1.01 || ws.direction.y > 1.01) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
-      ws.x += ws.direction.x * get_player_speed(ws) * dt;
-      ws.y += ws.direction.y * get_player_speed(ws) * dt;
+      ws.x = Math.min(ws.x + (ws.direction.x * get_player_speed(ws) * dt), MAP_SIZE.x);
+      ws.y = Math.min(ws.y + (ws.direction.y * get_player_speed(ws) * dt), MAP_SIZE.y);
     }
   }
 
