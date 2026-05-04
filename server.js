@@ -15,7 +15,7 @@ function get_player_speed(ws) {
 }
 
 function clamp(a, x, y) {
-  return Math.max(Math.min(a, x), y)
+  return Math.min(Math.max(a, x), y)
 }
 
 const TICK_RATE = 20;
