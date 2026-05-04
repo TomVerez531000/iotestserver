@@ -28,6 +28,7 @@ setInterval(() => {
       
       if (ws.direction.x > 1.01 || ws.direction.y > 1.01) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
       ws.x = Math.min(ws.x + (ws.direction.x * get_player_speed(ws) * dt), MAP_SIZE.x);
+      console.log(ws.x);
       ws.y = Math.min(ws.y + (ws.direction.y * get_player_speed(ws) * dt), MAP_SIZE.y);
     }
   }
