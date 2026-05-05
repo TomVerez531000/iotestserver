@@ -82,15 +82,20 @@ setInterval(() => {
       ws.x = clamp(ws.x + (ws.direction.x * get_player_speed(ws) * dt), -MAP_SIZE.x/2, MAP_SIZE.x/2);
       ws.y = clamp(ws.y + (ws.direction.y * get_player_speed(ws) * dt), -MAP_SIZE.y/2, MAP_SIZE.y/2);
 
+      const MAX_CHUNK_X = Math.ceil(MAP_SIZE.x / ENTITY_GRID_SIZE) - 1;
+      const MAX_CHUNK_Y = Math.ceil(MAP_SIZE.y / ENTITY_GRID_SIZE) - 1;
       var chunkX = Math.floor((ws.x+MAP_SIZE.x/2)/ENTITY_GRID_SIZE);
       var chunkY = Math.floor((ws.y+MAP_SIZE.y/2)/ENTITY_GRID_SIZE);
+      chunkX = clamp(chunkX, 0, MAX_CHUNK_X);
+      chunkY = clamp(chunkY, 0, MAX_CHUNK_Y);
+      
       let chunk = entity_grids[chunkX][chunkY];
       for (let i = chunk.length - 1; i >= 0; i--) {
         const element = chunk[i];
         if (element.check_eaten(ws)) {
           if (eaten[id] == null) {eaten[id] = []}
           eaten[id].push(element);
-          chunk.slice(i, 1);
+          chunk.splice(i, 1);
           ws.size += 1
         }
       };
@@ -179,6 +184,6 @@ wss.on("connection", (ws, req) => {
   });
 
   ws.on("close", (ws) => {
-    players[ws.id] = null;
+    delete players[ws.id];
   })
 });
