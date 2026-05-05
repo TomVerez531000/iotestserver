@@ -188,7 +188,7 @@ wss.on("connection", (ws, req) => {
     }
   });
 
-  ws.on("close", (ws) => {
+  ws.on("close", () => {
     delete players[ws.id];
   })
 });
