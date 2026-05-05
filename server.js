@@ -45,27 +45,29 @@ const FOOD_PER_CHUNK = 30;
 const ENTITY_GRID_SIZE = 500;
 const entity_grids = [];
 function generateFood(mapSeed) {
-    const spawnRandom = mulberry32(mapSeed);
-    for (var chunkX = 0; chunkX < Math.ceil(MAP_SIZE.x/ENTITY_GRID_SIZE); chunkX ++) {
-        entity_grids[chunkX] = [];
-        for (var chunkY = 0; chunkY < Math.ceil(MAP_SIZE.y/ENTITY_GRID_SIZE); chunkY ++) {
-            let chunk = [];
-            for(let i = 0; i < FOOD_PER_CHUNK; i++) {
-                spawnRandom() // skip hue for ball color
-                let offsetX = spawnRandom() * ENTITY_GRID_SIZE
-                let offsetY = spawnRandom() * ENTITY_GRID_SIZE
-                let x = chunkX*ENTITY_GRID_SIZE + offsetX - MAP_SIZE.x/2;
-                let y = chunkY*ENTITY_GRID_SIZE + offsetY - MAP_SIZE.y/2;
-                
-                var f = new Food(x, y, 5);
-                chunk.push(f);
-            }
-            entity_grids[chunkX][chunkY] = chunk;
-        }
+  const spawnRandom = mulberry32(mapSeed);
+  var counter = 0;
+  for (var chunkX = 0; chunkX < Math.ceil(MAP_SIZE.x/ENTITY_GRID_SIZE); chunkX ++) {
+    entity_grids[chunkX] = [];
+    for (var chunkY = 0; chunkY < Math.ceil(MAP_SIZE.y/ENTITY_GRID_SIZE); chunkY ++) {
+      let chunk = [];
+      for(let i = 0; i < FOOD_PER_CHUNK; i++) {
+        spawnRandom() // skip hue for ball color
+        let offsetX = spawnRandom() * ENTITY_GRID_SIZE
+        let offsetY = spawnRandom() * ENTITY_GRID_SIZE
+        let x = chunkX*ENTITY_GRID_SIZE + offsetX - MAP_SIZE.x/2;
+        let y = chunkY*ENTITY_GRID_SIZE + offsetY - MAP_SIZE.y/2;
+        
+        var f = new Food(x, y, 5);
+        chunk.push(f);
+        
+        counter ++;
+        f.id = counter;
+      }
+      entity_grids[chunkX][chunkY] = chunk;
     }
+  }
 }
-
-
 
 
 let mapSeed = Math.floor(Math.random()*100000);
@@ -99,7 +101,7 @@ setInterval(() => {
         const element = chunk[i];
         if (element.check_eaten(ws)) {
           if (eaten[id] == null) {eaten[id] = []}
-          eaten[id].push(element);
+          eaten[id].push(element.id);
           chunk.splice(i, 1);
           ws.size += 1
         }
