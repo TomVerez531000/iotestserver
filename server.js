@@ -11,7 +11,7 @@ function send_data(ws, data) {
 }
 
 function get_player_speed(ws) {
-  return 1/ws.size*1000;
+  return (0.99**ws.size)*1000;
 }
 
 function clamp(a, x, y) {
