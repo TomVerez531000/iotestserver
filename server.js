@@ -82,8 +82,8 @@ setInterval(() => {
       ws.x = clamp(ws.x + (ws.direction.x * get_player_speed(ws) * dt), -MAP_SIZE.x/2, MAP_SIZE.x/2);
       ws.y = clamp(ws.y + (ws.direction.y * get_player_speed(ws) * dt), -MAP_SIZE.y/2, MAP_SIZE.y/2);
 
-      var chunkX = Math.floor((localPlayer.position.x+MAP_SIZE.x/2)/ENTITY_GRID_SIZE);
-      var chunkY = Math.floor((localPlayer.position.y+MAP_SIZE.y/2)/ENTITY_GRID_SIZE);
+      var chunkX = Math.floor((ws.x+MAP_SIZE.x/2)/ENTITY_GRID_SIZE);
+      var chunkY = Math.floor((ws.y+MAP_SIZE.y/2)/ENTITY_GRID_SIZE);
       let chunk = entity_grids[chunkX][chunkY];
       for (let i = chunk.length - 1; i >= 0; i--) {
         const element = chunk[i];
