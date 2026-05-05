@@ -11,11 +11,58 @@ function send_data(ws, data) {
 }
 
 function get_player_speed(ws) {
-  return 1/ws.size*10000;
+  return 1/ws.size*1000;
 }
 
 function clamp(a, x, y) {
   return Math.min(Math.max(a, x), y)
+}
+
+class Food {
+  constructor(x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+  }
+
+  check_eaten(ply) {
+    const magnitude = Math.sqrt((ply.x-this.x)**2 + (ply.y-this.y)**2);
+
+    return magnitude <= ply.size;
+  }
+}
+
+function mulberry32(a) {
+    return function() {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+const FOOD_PER_CHUNK = 30;
+const ENTITY_GRID_SIZE = 500;
+const entity_grids = [];
+function generateFood(mapSeed) {
+    const spawnRandom = mulberry32(mapSeed);
+    for (var chunkX = 0; chunkX < Math.ceil(MAP_SIZE.x/ENTITY_GRID_SIZE); chunkX ++) {
+        entity_grids[chunkX] = [];
+        for (var chunkY = 0; chunkY < Math.ceil(MAP_SIZE.y/ENTITY_GRID_SIZE); chunkY ++) {
+            let chunk = [];
+            for(let i = 0; i < FOOD_PER_CHUNK; i++) {
+                spawnRandom() // skip hue for ball color
+                let offsetX = spawnRandom() * ENTITY_GRID_SIZE
+                let offsetY = spawnRandom() * ENTITY_GRID_SIZE
+                let x = chunkX*ENTITY_GRID_SIZE + offsetX - MAP_SIZE.x/2;
+                let y = chunkY*ENTITY_GRID_SIZE + offsetY - MAP_SIZE.y/2;
+                
+                var f = new Food(x, y, 5);
+                chunk.push(f);
+            }
+            entity_grids[chunkX][chunkY] = chunk;
+        }
+    }
 }
 
 const TICK_RATE = 20;
@@ -24,6 +71,7 @@ var players = {}
 setInterval(() => {
   const dt = 1 / TICK_RATE;
 
+  const eaten = {}
   for (let id in players) {
     var ws = players[id]
     if (ws == null) {continue}
@@ -33,13 +81,26 @@ setInterval(() => {
       if (ws.direction.x > 1.01 || ws.direction.y > 1.01) {ws.close();} // direction isnt normalized meaning the player try to speedhack with direction
       ws.x = clamp(ws.x + (ws.direction.x * get_player_speed(ws) * dt), -MAP_SIZE.x/2, MAP_SIZE.x/2);
       ws.y = clamp(ws.y + (ws.direction.y * get_player_speed(ws) * dt), -MAP_SIZE.y/2, MAP_SIZE.y/2);
+
+      var chunkX = Math.floor((localPlayer.position.x+MAP_SIZE.x/2)/ENTITY_GRID_SIZE);
+      var chunkY = Math.floor((localPlayer.position.y+MAP_SIZE.y/2)/ENTITY_GRID_SIZE);
+      let chunk = entity_grids[chunkX][chunkY];
+      for (let i = chunk.length - 1; i >= 0; i--) {
+        const element = chunk[i];
+        if (element.check_eaten(ws)) {
+          if (eaten[id] == null) {eaten[id] = []}
+          eaten[id].push(element);
+          chunk.slice(i, 1);
+          ws.size += 1
+        }
+      };
     }
   }
 
-  broadcastPositions();
+  broadcastPositions(eaten);
 }, 1000 / TICK_RATE);
 
-function broadcastPositions() {
+function broadcastPositions(eaten) {
   const payload = {
     type: "update_world",
     players: {}
@@ -53,7 +114,8 @@ function broadcastPositions() {
     payload.players[ws.id] = {
       x: ws.x,
       y: ws.y,
-      size: ws.size
+      size: ws.size,
+      eaten: eaten[id]
     };
   }
 
@@ -72,7 +134,7 @@ function get_spawn_pos(ws) {
   return {x:0, y:0}
 }
 
-var base_size = 100;
+var base_size = 10;
 function player_join(ws, data) {
   const nickname = data.nickname
   if (nickname == null || nickname == "" || nickname.length > 20) {
